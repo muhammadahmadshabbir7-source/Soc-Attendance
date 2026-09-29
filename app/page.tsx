@@ -143,14 +143,6 @@ const IconSettings = () => (
     <path d="M19.4 13.5a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V19.6a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.1-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.04H4.4a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.56-1.1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H10.5a1.7 1.7 0 0 0 1.04-1.56V4.4a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1.04 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V10.5a1.7 1.7 0 0 0 1.56 1.04h.09a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.56 1.04Z" />
   </Icon>
 );
-const IconLogout = () => (
-  <Icon>
-    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-    <path d="M16 17l5-5-5-5" />
-    <path d="M21 12H9" />
-  </Icon>
-);
-
 const NAV: { key: Tab; label: string; icon: () => React.ReactNode }[] = [
   { key: "dashboard", label: "Dashboard", icon: IconDashboard },
   { key: "attendance", label: "Attendance", icon: IconAttendance },
@@ -329,11 +321,6 @@ export default function SocAttendanceApp() {
     }
   }
 
-  async function logout() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    window.location.href = "/login";
-  }
-
   const isToday = date === todayISO();
   const d = formatDisplay(date);
 
@@ -377,9 +364,6 @@ export default function SocAttendanceApp() {
               <div className="name">Admin</div>
               <div className="role">Signed in</div>
             </div>
-            <button onClick={logout} title="Sign out" aria-label="Sign out">
-              <IconLogout />
-            </button>
           </div>
         </div>
       </aside>
