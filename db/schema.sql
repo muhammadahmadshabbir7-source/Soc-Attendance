@@ -1,4 +1,4 @@
--- Hazri attendance portal schema
+-- SOC Attendance portal schema
 
 CREATE TABLE IF NOT EXISTS staff (
   id SERIAL PRIMARY KEY,
@@ -31,7 +31,7 @@ CREATE INDEX IF NOT EXISTS idx_attendance_staff ON attendance_records (staff_id)
 
 CREATE TABLE IF NOT EXISTS settings (
   id INT PRIMARY KEY DEFAULT 1,
-  org_name TEXT NOT NULL DEFAULT 'Hazri',
+  org_name TEXT NOT NULL DEFAULT 'SOC Attendance',
   late_cutoff TIME NOT NULL DEFAULT '09:00',
   grace_minutes INT NOT NULL DEFAULT 10,
   CONSTRAINT settings_singleton CHECK (id = 1)

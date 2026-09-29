@@ -160,13 +160,13 @@ const NAV: { key: Tab; label: string; icon: () => React.ReactNode }[] = [
 ];
 
 /* ============================== Root ============================== */
-export default function HazriApp() {
+export default function SocAttendanceApp() {
   const [tab, setTab] = useState<Tab>("dashboard");
   const [date, setDate] = useState(todayISO());
   const [staff, setStaff] = useState<StaffRow[]>([]);
   const [records, setRecords] = useState<Record<number, RecordRow>>({});
   const [history, setHistory] = useState<HistoryRow[]>([]);
-  const [settings, setSettings] = useState<Settings>({ org_name: "Hazri", late_cutoff: "09:00", grace_minutes: 0 });
+  const [settings, setSettings] = useState<Settings>({ org_name: "SOC Attendance", late_cutoff: "09:00", grace_minutes: 0 });
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
   const [toast, setToast] = useState("");
@@ -197,7 +197,13 @@ export default function HazriApp() {
   }, []);
   const loadSettings = useCallback(async () => {
     const res = await fetch("/api/settings");
-    if (res.ok) setSettings((await res.json()).settings);
+    if (res.ok) {
+      const loadedSettings = (await res.json()).settings as Settings;
+      setSettings({
+        ...loadedSettings,
+        org_name: loadedSettings.org_name === "Hazri" ? "SOC Attendance" : loadedSettings.org_name,
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -210,8 +216,8 @@ export default function HazriApp() {
   }, []);
 
   useEffect(() => {
-    loadRecords(date);
-  }, [date, loadRecords]);
+    loadRecords(tab === "dashboard" ? todayISO() : date);
+  }, [date, tab, loadRecords]);
 
   const activeStaff = useMemo(() => staff.filter((s) => s.active), [staff]);
   const inactiveStaff = useMemo(() => staff.filter((s) => !s.active), [staff]);
@@ -352,8 +358,8 @@ export default function HazriApp() {
         <div className="sidebar-brand">
           <div className="mark">H</div>
           <div className="name">
-            {settings.org_name === "Hazri" ? "Hazri" : settings.org_name}
-            <small>{settings.org_name === "Hazri" ? "Staff attendance" : "Hazri attendance"}</small>
+            {settings.org_name}
+            <small>SOC Attendance</small>
           </div>
         </div>
         <nav className="sidebar-nav">
@@ -445,7 +451,7 @@ export default function HazriApp() {
           <SettingsTab settings={settings} effectiveCutoff={effectiveCutoff} onSave={saveSettings} />
         )}
 
-        <div className="footnote">Hazri — daily attendance, at a glance.</div>
+        <div className="footnote">SOC Attendance — daily attendance, at a glance.</div>
       </main>
 
       {addOpen && <AddStaffModal onClose={() => setAddOpen(false)} onSubmit={addStaff} />}
@@ -479,7 +485,7 @@ function DashboardTab({
   const pct = total > 0 ? Math.round((marked / total) * 100) : 0;
 
   const lateStaff = activeStaff.filter((s) => s.total_marked_days >= 3 && Math.round((s.late_days / s.total_marked_days) * 100) >= 25);
-  const onLeaveStaff = activeStaff.filter((s) => statusOf(s.id) === "leave");
+  const absentStaff = activeStaff.filter((s) => statusOf(s.id) === "absent");
 
   // sort: late first, then unmarked, then on-time/absent/leave, for the snapshot grid
   const order = { late: 0, unmarked: 1, absent: 2, leave: 3, present: 4 };
@@ -587,15 +593,15 @@ function DashboardTab({
         <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
           <div className="card" style={{ marginBottom: 0 }}>
             <div className="card-head">
-              <h2>On leave today</h2>
+              <h2>Absent today</h2>
             </div>
-            {onLeaveStaff.length === 0 ? (
+            {absentStaff.length === 0 ? (
               <div className="empty" style={{ padding: "18px 16px" }}>
-                Nobody is on leave today.
+                Nobody is absent today.
               </div>
             ) : (
               <div className="mini-list">
-                {onLeaveStaff.map((s) => (
+                {absentStaff.map((s) => (
                   <div className="mini-row" key={s.id}>
                     <div className="avatar">{initials(s.name)}</div>
                     <div className="who">

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Hazri — staff attendance",
+  title: "SOC Attendance ",
   description: "Daily staff attendance tracker that flags anyone late past your cutoff time.",
 };
 

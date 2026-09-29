@@ -37,7 +37,7 @@ function LoginForm() {
   return (
     <div className="login-shell">
       <div className="login-card">
-        <span className="brand-mark display">Hazri</span>
+        <span className="brand-mark display">SOC Attendance</span>
         <p>Enter your password to access the attendance portal.</p>
         {error && <div className="login-error">{error}</div>}
         <form onSubmit={submit}>
